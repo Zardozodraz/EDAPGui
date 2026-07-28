@@ -1,3 +1,4 @@
+*/__pycache__
 /__pycache__
 /hold
 /notes
@@ -24,3 +25,5 @@ configs/ship_configs.json
 test/match/
 debug-output/
 runs/
+
+autopilot*.log

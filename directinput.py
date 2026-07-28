@@ -265,7 +265,20 @@ SCANCODE = {
   "??_253": 253,
   "??_254": 254
 }
+Joy_SCANCODE = {
+    "0": {
+        "Joy_XAxis": "",
+    },
+    "1": {
+        "Joy_XAxis": "",
+    }
+}
 
+def get_scancode(key, device, DeviceIndex):
+    if device == "Keyboard":
+        return SCANCODE[key]
+    elif device == "T16000M":
+        return Joy_SCANCODE[DeviceIndex][key]
 
 # C struct redefinitions
 

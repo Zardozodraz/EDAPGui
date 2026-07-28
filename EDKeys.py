@@ -34,19 +34,16 @@ class EDKeys:
         self.activate_window = False
 
         self.keys_to_obtain = [
-            'YawLeftButton',
-            'YawRightButton',
-            'RollLeftButton',
-            'RollRightButton',
-            'PitchUpButton',
-            'PitchDownButton',
+            'YawAxisRaw',
+            'RollAxisRaw',
+            'PitchAxisRaw',
             'SetSpeedZero',
-            'SetSpeed50',
+            'SetSpeed50', # Ajouté
             'SetSpeed100',
             'HyperSuperCombination',
             'SelectTarget',
             'DeployHeatSink',
-            'UIFocus',
+            'UIFocus', # Ajouté
             'UI_Up',
             'UI_Down',
             'UI_Left',
@@ -54,7 +51,7 @@ class EDKeys:
             'UI_Select',
             'UI_Back',
             'CycleNextPanel',
-            'HeadLookReset',
+            'HeadLookReset', # Ajouté
             'PrimaryFire',
             'SecondaryFire',
             'ExplorationFSSEnter',
