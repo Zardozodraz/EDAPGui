@@ -267,18 +267,58 @@ SCANCODE = {
 }
 Joy_SCANCODE = {
     "0": {
-        "Joy_XAxis": "",
+        "Joy_XAxis": "Joy0_XAxis",
+        "Joy_YAxis": "Joy0_YAxis",
+        "Joy_RZAxis": "Joy0_RZAxis",
+        "Joy_1": "Joy0_1",
+        "Joy_2": "Joy0_2",
+        "Joy_3": "Joy0_3",
+        "Joy_4": "Joy0_4",
+        "Joy_5": "Joy0_5",
+        "Joy_6": "Joy0_6",
+        "Joy_7": "Joy0_7",
+        "Joy_8": "Joy0_8",
+        "Joy_9": "Joy0_9",
+        "Joy_10": "Joy0_10",
+        "Joy_11": "Joy0_11",
+        "Joy_12": "Joy0_12",
+        "Joy_13": "Joy0_13",
+        "Joy_14": "Joy0_14",
+        "Joy_15": "Joy0_15",
+        "Joy_16": "Joy0_16",
     },
     "1": {
-        "Joy_XAxis": "",
+        "Joy_XAxis": "Joy1_XAxis",
+        "Joy_YAxis": "Joy1_YAxis",
+        "Joy_RZAxis": "Joy1_RZAxis",
+        "Joy_1": "Joy1_1",
+        "Joy_2": "Joy1_2",
+        "Joy_3": "Joy1_3",
+        "Joy_4": "Joy1_4",
+        "Joy_5": "Joy1_5",
+        "Joy_6": "Joy1_6",
+        "Joy_7": "Joy1_7",
+        "Joy_8": "Joy1_8",
+        "Joy_9": "Joy1_9",
+        "Joy_10": "Joy1_10",
+        "Joy_11": "Joy1_11",
+        "Joy_12": "Joy1_12",
+        "Joy_13": "Joy1_13",
+        "Joy_14": "Joy1_14",
+        "Joy_15": "Joy1_15",
+        "Joy_16": "Joy1_16",
     }
 }
 
-def get_scancode(key, device, DeviceIndex):
+def get_scancode(key, device, DeviceIndex=None):
     if device == "Keyboard":
         return SCANCODE[key]
     elif device == "T16000M":
+        if DeviceIndex is None:
+            raise KeyError(f"Missing DeviceIndex for device '{device}', key '{key}'")
         return Joy_SCANCODE[DeviceIndex][key]
+    else:
+        raise KeyError(f"Unrecognised device '{device}' for key '{key}'")
 
 # C struct redefinitions
 

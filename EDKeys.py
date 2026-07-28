@@ -135,6 +135,34 @@ class EDKeys:
 
     def get_bindings(self) -> dict[str, Any]:
         """Returns a dict struct with the direct input equivalent of the necessary elite keybindings"""
+
+        def parse_binding(elem) -> dict[str, Any] | None:
+            """Parse a Primary/Secondary element. Returns None if the device is not usable
+            (no device bound, or a Mouse binding which we don't support)."""
+            device = elem.attrib['Device'].strip()
+            if device in ("{NoDevice}", "Mouse"):
+                return None
+
+            key = elem.attrib['Key']
+            # Only T16000M bindings carry a DeviceIndex attribute; keyboard bindings don't.
+            device_index = elem.attrib.get('DeviceIndex') if device == "T16000M" else None
+
+            mods = []
+            hold = None
+            for modifier in elem:
+                if modifier.tag == "Modifier":
+                    mod_device = modifier.attrib.get('Device', device).strip()
+                    mod_device_index = modifier.attrib.get('DeviceIndex') if mod_device == "T16000M" else None
+                    mods.append({
+                        'key': modifier.attrib['Key'],
+                        'device': mod_device,
+                        'device_index': mod_device_index,
+                    })
+                elif modifier.tag == "Hold":
+                    hold = True
+
+            return {'device': device, 'key': key, 'device_index': device_index, 'mods': mods, 'hold': hold}
+
         direct_input_keys = {}
         latest_bindings = self.get_latest_keybinds()
         if not latest_bindings:
@@ -144,41 +172,37 @@ class EDKeys:
 
         for item in bindings_root:
             if item.tag in self.keys_to_obtain:
-                key = None
-                mods = []
-                hold = None
-                # Check primary
-                if item[0].attrib['Device'].strip() == "Keyboard":
-                    key = item[0].attrib['Key']
-                    for modifier in item[0]:
-                        if modifier.tag == "Modifier":
-                            mods.append(modifier.attrib['Key'])
-                        elif modifier.tag == "Hold":
-                            hold = True
-                # Check secondary (and prefer secondary)
-                if item[1].attrib['Device'].strip() == "Keyboard":
-                    key = item[1].attrib['Key']
-                    mods = []
-                    hold = None
-                    for modifier in item[1]:
-                        if modifier.tag == "Modifier":
-                            mods.append(modifier.attrib['Key'])
-                        elif modifier.tag == "Hold":
-                            hold = True
-                # Prepare final binding
+                primary = parse_binding(item[0])
+                secondary = parse_binding(item[1])
+
+                # Prefer Keyboard regardless of Primary/Secondary slot.
+                # Then prefer Secondary over Primary for any other device (previous behaviour).
+                if secondary is not None and secondary['device'] == "Keyboard":
+                    selected = secondary
+                elif primary is not None and primary['device'] == "Keyboard":
+                    selected = primary
+                elif secondary is not None:
+                    selected = secondary
+                elif primary is not None:
+                    selected = primary
+                else:
+                    selected = None
+
                 binding: None | dict[str, Any] = None
-                try:
-                    if key is not None:
+                if selected is not None:
+                    try:
                         binding = {}
-                        binding['key'] = SCANCODE[key]
+                        binding['key'] = get_scancode(selected['key'], selected['device'], selected['device_index'])
                         binding['mods'] = []
-                        for mod in mods:
-                            binding['mods'].append(SCANCODE[mod])
-                        if hold is not None:
+                        for mod in selected['mods']:
+                            binding['mods'].append(get_scancode(mod['key'], mod['device'], mod['device_index']))
+                        if selected['hold'] is not None:
                             binding['hold'] = True
-                except KeyError:
-                    print("Unrecognised key '" + (
-                        json.dumps(binding) if binding else '?') + "' for bind '" + item.tag + "'")
+                    except KeyError as e:
+                        print("Unrecognised key '" + (
+                            json.dumps(binding) if binding else '?') + "' for bind '" + item.tag + "': " + str(e))
+                        binding = None
+
                 if binding is not None:
                     direct_input_keys[item.tag] = binding
 
