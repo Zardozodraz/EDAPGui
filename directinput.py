@@ -318,6 +318,10 @@ def get_scancode(key, device, DeviceIndex=None):
         if DeviceIndex is None:
             raise KeyError(f"Missing DeviceIndex for device '{device}', key '{key}'")
         return Joy_SCANCODE[DeviceIndex][key]
+    elif device == "vJoy":
+            if DeviceIndex is None:
+                raise KeyError(f"Missing DeviceIndex for device '{device}', key '{key}'")
+            return Joy_SCANCODE[DeviceIndex][key]
     else:
         raise KeyError(f"Unrecognised device '{device}' for key '{key}'")
 

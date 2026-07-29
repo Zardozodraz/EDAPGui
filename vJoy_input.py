@@ -96,6 +96,7 @@ def PushJoy(joy_code: str, value: float):
                   Pour un bouton: != 0 = pressé, 0 = relâché.
     @return: N/A
     """
+    print("PushJoy: ", joy_code, value)
     match = re.match(r'^Joy(\d+)_(.+)$', joy_code)
     if not match:
         raise ValueError(f"Format de joy_code invalide : '{joy_code}'. Attendu: 'Joy<index>_<nom>'.")
@@ -121,46 +122,32 @@ def PushJoy(joy_code: str, value: float):
         logger.debug(f"PushJoy: {joy_code} -> bouton {btn_number} = {state}")
 
 
-def release_all_vjoy(device_index: str | None = None):
-    """ Remet à zéro (neutre) tous les axes et boutons d'un ou tous les devices vJoy ouverts.
-    Note: device.reset() du SDK vJoy (via pyvjoy) n'est pas fiable selon les versions du driver
-    (n'efface pas toujours tous les axes/boutons), donc chaque axe/bouton connu est remis à zéro
-    explicitement plutôt que de dépendre de cette fonction.
-    @param device_index: DeviceIndex spécifique à réinitialiser, ou None pour tous les devices ouverts
-        (dans ce projet: '0' et '1').
+def release_all_vjoy():
+    """Remet à zéro tous les axes et boutons des 2 devices vJoy configurés
+    en utilisant PushJoy().
+
     @return: N/A
     """
-    targets = [device_index] if device_index is not None else list(_vjoy_devices.keys())
-    for idx in targets:
-        device = _vjoy_devices.get(idx)
-        if device is None:
-            continue
-
-        # Remet chaque axe connu au point mort.
-        for name, axis in _AXIS_HID_MAP.items():
+    for device_index in ("0", "1"):
+        # Axes
+        for axis_name in _AXIS_HID_MAP:
             try:
-                device.set_axis(axis, VJOY_AXIS_MID)
+                PushJoy(f"Joy{device_index}_{axis_name}", 0.0)
             except Exception as e:
-                logger.debug(f"vJoy_input: impossible de remettre l'axe {name} au neutre: {e}")
+                logger.debug(
+                    f"vJoy_input: impossible de remettre l'axe {axis_name} du device {device_index} au neutre: {e}"
+                )
 
-        # Relâche chaque bouton connu (16 par device).
+        # Boutons
         for btn_number in range(1, _VJOY_BUTTON_COUNT + 1):
             try:
-                device.set_button(btn_number, 0)
+                PushJoy(f"Joy{device_index}_{btn_number}", 0.0)
             except Exception as e:
-                logger.debug(f"vJoy_input: impossible de relâcher le bouton {btn_number}: {e}")
+                logger.debug(
+                    f"vJoy_input: impossible de relâcher le bouton {btn_number} du device {device_index}: {e}"
+                )
 
-        logger.info(f"vJoy_input: device DeviceIndex {idx} réinitialisé (axes et boutons remis à zéro).")
-
-
-def release_all_devices():
-    """ Remet à zéro les 2 devices vJoy configurés pour ce projet ('0' et '1'), qu'ils soient
-    ouverts ou non (les ouvre si nécessaire pour les réinitialiser).
-    @return: N/A
-    """
-    for idx in ('0', '1'):
-        _get_vjoy_device(idx)  # s'assure que le device est ouvert
-    release_all_vjoy()
+        logger.info(f"vJoy_input: device DeviceIndex {device_index} réinitialisé.")
 
 
 # ----------------------------------------------------------------------------
@@ -170,18 +157,23 @@ def release_all_devices():
 def main():
     print("Test vJoy démarré (2 devices, 16 boutons chacun). CTRL+C pour arrêter.")
     try:
-        PushJoy('Joy0_XAxis', -1.0)   # Pleine gauche sur le device 0
-        time.sleep(1)
-        PushJoy('Joy0_XAxis', 0.0)    # Neutre
-        time.sleep(1)
+        PushJoy('Joy1_XAxis', -1.0)   # Pleine gauche sur le device 1
+        time.sleep(2)
+        PushJoy('Joy1_XAxis', 0.0)    # Neutre
+        time.sleep(2)
+        PushJoy('Joy1_YAxis', -1.0)   # Pleine Bas sur le device 1
+        time.sleep(2)
+        PushJoy('Joy1_YAxis', 0.0)    # Neutre
+        time.sleep(2)
         PushJoy('Joy1_RZAxis', 1.0)   # Pleine rotation sur le device 1
-        time.sleep(1)
-        PushJoy('Joy0_1', 1)          # Bouton 1 pressé sur le device 0
+        time.sleep(2)
+        PushJoy('Joy1_1', 1)          # Bouton 1 pressé sur le device 1
         time.sleep(0.5)
-        PushJoy('Joy0_1', 0)          # Bouton 1 relâché
+        PushJoy('Joy1_1', 0)          # Bouton 1 relâché
     finally:
-        release_all_devices()
+        release_all_vjoy()
 
 
 if __name__ == "__main__":
-    main()
+    #main()
+    release_all_vjoy()

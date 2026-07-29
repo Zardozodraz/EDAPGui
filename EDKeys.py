@@ -150,15 +150,15 @@ class EDKeys:
                 return None
 
             key = elem.attrib['Key']
-            # Only T16000M bindings carry a DeviceIndex attribute; keyboard bindings don't.
-            device_index = elem.attrib.get('DeviceIndex') if device == "T16000M" else None
+            # Only T16000M and vJoy bindings carry a DeviceIndex attribute; keyboard bindings don't.
+            device_index = elem.attrib.get('DeviceIndex') if device in ("T16000M", "vJoy") else None
 
             mods = []
             hold = None
             for modifier in elem:
                 if modifier.tag == "Modifier":
                     mod_device = modifier.attrib.get('Device', device).strip()
-                    mod_device_index = modifier.attrib.get('DeviceIndex') if mod_device == "T16000M" else None
+                    mod_device_index = modifier.attrib.get('DeviceIndex') if mod_device in ("T16000M", "vJoy") else None
                     mods.append({
                         'key': modifier.attrib['Key'],
                         'device': mod_device,
@@ -178,21 +178,27 @@ class EDKeys:
 
         for item in bindings_root:
             if item.tag in self.keys_to_obtain:
-                primary = parse_binding(item[0])
-                secondary = parse_binding(item[1])
 
-                # Prefer Keyboard regardless of Primary/Secondary slot.
-                # Then prefer Secondary over Primary for any other device (previous behaviour).
-                if secondary is not None and secondary['device'] == "Keyboard":
-                    selected = secondary
-                elif primary is not None and primary['device'] == "Keyboard":
-                    selected = primary
-                elif secondary is not None:
-                    selected = secondary
-                elif primary is not None:
-                    selected = primary
+                if len(item) > 0 and item[0].tag == "Binding":
+                    # Entrée de type axe (ex: YawAxisRaw, PitchAxisAlternate...)
+                    # Un seul binding possible, pas de Primary/Secondary.
+                    selected = parse_binding(item[0])
                 else:
-                    selected = None
+                    primary = parse_binding(item[0])
+                    secondary = parse_binding(item[1])
+
+                    # Prefer Keyboard regardless of Primary/Secondary slot.
+                    # Then prefer Secondary over Primary for any other device (previous behaviour).
+                    if secondary is not None and secondary['device'] == "Keyboard":
+                        selected = secondary
+                    elif primary is not None and primary['device'] == "Keyboard":
+                        selected = primary
+                    elif secondary is not None:
+                        selected = secondary
+                    elif primary is not None:
+                        selected = primary
+                    else:
+                        selected = None
 
                 binding: None | dict[str, Any] = None
                 if selected is not None:
@@ -308,6 +314,8 @@ class EDKeys:
             dans le binding parsé depuis le fichier .binds. Sert à router l'appel vers la bonne
             fonction bas niveau : clavier (PressKey/ReleaseKey) ou joystick (PushJoy - à venir).
         """
+        print(f"send: key_binding={key_binding}, hold={hold}, state={state}, value={value}")
+        
         key = self.keys.get(key_binding)
         if key is None:
             logger.warning('SEND=NONE !!!!!!!!')
