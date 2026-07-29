@@ -5,6 +5,7 @@
 
 import ctypes
 import time
+import vJoy_input
 
 SendInput = ctypes.windll.user32.SendInput
 
@@ -352,6 +353,20 @@ class Input(ctypes.Structure):
     _fields_ = [("type", ctypes.c_ulong),
                 ("ii", Input_I)]
 
+# Choose the sending function based on the device type
+
+def choose_send_function(key, value=0):
+    """
+    Choose the appropriate send function based on the key and value.
+    @param key: The key scancode to send (e.g., "Key_W", "Joy0_1").
+    @param value: The value to send (0 for release/reset axis, 1 for press/full axis, -1 for full invert axis).
+    """
+    
+    if "Key" in key:
+        PressKey(key) if value==1 else ReleaseKey(key)
+
+    elif "Joy" in key:
+        vJoy_input.PushJoy(key, value)
 
 # Actual Functions
 

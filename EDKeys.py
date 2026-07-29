@@ -37,6 +37,11 @@ class EDKeys:
             'YawAxisRaw',
             'RollAxisRaw',
             'PitchAxisRaw',
+            
+            'YawAxisAlternate',
+            'RollAxisAlternate',
+            'PitchAxisAlternate',
+            
             'SetSpeedZero',
             'SetSpeed50', # Ajouté
             'SetSpeed100',
@@ -192,6 +197,7 @@ class EDKeys:
                 if selected is not None:
                     try:
                         binding = {}
+                        binding['device'] = selected['device']  # "Keyboard" ou "T16000M"
                         binding['key'] = get_scancode(selected['key'], selected['device'], selected['device_index'])
                         binding['mods'] = []
                         for mod in selected['mods']:
@@ -209,6 +215,7 @@ class EDKeys:
         if len(list(direct_input_keys.keys())) < 1:
             return {}
         else:
+            print(direct_input_keys)
             return direct_input_keys
 
     def get_bindings_dict(self) -> dict[str, Any]:
@@ -285,7 +292,7 @@ class EDKeys:
         else:
             PressKey(key)
 
-    def send(self, key_binding, hold=None, repeat=1, repeat_delay=None, state=None):
+    def send(self, key_binding, hold=None, repeat=1, repeat_delay=None, state=None, device_type=None):
         """ Send a key based on the defined keybind
         @param key_binding: The key bind name (i.e. UseBoostJuice).
         @param hold: The time to hold the key down in seconds.
@@ -295,6 +302,10 @@ class EDKeys:
             None - press and release (default).
             1 - press (but don't release).
             0 - release (a previous press state).
+        @param device_type: Force le type de device utilisé pour envoyer cette touche
+            ("Keyboard" ou "T16000M"). Si None (par défaut), on utilise le device stocké
+            dans le binding parsé depuis le fichier .binds. Sert à router l'appel vers la bonne
+            fonction bas niveau : clavier (PressKey/ReleaseKey) ou joystick (PushJoy - à venir).
         """
         key = self.keys.get(key_binding)
         if key is None:

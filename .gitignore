@@ -27,3 +27,4 @@ debug-output/
 runs/
 
 autopilot*.log
+vJoy_test*.py
