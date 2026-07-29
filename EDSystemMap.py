@@ -69,7 +69,7 @@ class EDSystemMap:
                 ap.keys.send('UI_Select', hold=3.0)
 
                 # Close System Map
-                ap.keys.send('SystemMapOpen')
+                ap.keys.send('SystemMapOpen', value=1)
                 sleep(0.5)
                 return True
 
@@ -105,7 +105,7 @@ class EDSystemMap:
             # Goto cockpit view
             self.ap.ship_control.goto_cockpit_view()
             # Goto System Map
-            self.ap.keys.send('SystemMapOpen')
+            self.ap.keys.send('SystemMapOpen', value=1)
 
             if self.ap.debug_overlay:
                 stn_svcs = Quad.from_rect(self.reg['full_panel']['rect'])

@@ -210,9 +210,9 @@ class EDShipControl:
 
         # Check if we are rolling right or left and perform the movement.
         if deg > 0.0:
-            self.keys.send('RollRightButton', hold=htime)
+            self.keys.send('RollAxisAlternate', hold=htime, value=1) # RollRightButton
         else:
-            self.keys.send('RollLeftButton', hold=htime)
+            self.keys.send('RollAxisAlternate', hold=htime, value=-1) # RollLeftButton
 
         # Calculate error
         # Calc the position we want to achieve
@@ -303,9 +303,9 @@ class EDShipControl:
 
         # Check if we are pitching up or down and perform the movement.
         if deg > 0.0:
-            self.keys.send('PitchUpButton', hold=htime)
+            self.keys.send('PitchAxisAlternate', hold=htime, value=1) # PitchUpButton
         else:
-            self.keys.send('PitchDownButton', hold=htime)
+            self.keys.send('PitchAxisAlternate', hold=htime, value=-1) # PitchDownButton
 
         # Calculate error
         # Calc the position we want to achieve
@@ -396,9 +396,9 @@ class EDShipControl:
 
         # Check if we are yawing right or left and perform the movement.
         if deg > 0.0:
-            self.keys.send('YawRightButton', hold=htime)
+            self.keys.send('YawAxisAlternate', hold=htime, value=1) # YawRightButton
         else:
-            self.keys.send('YawLeftButton', hold=htime)
+            self.keys.send('YawAxisAlternate', hold=htime, value=-1) # YawLeftButton
 
         # Calculate error
         # Auto-tune if necessary
@@ -469,9 +469,9 @@ class EDShipControl:
                     self.ap.overlay.overlay_paint()
 
                 if off['roll'] > 0:
-                    self.keys.send('RollRightButton', hold=test_time)
+                    self.keys.send('RollAxisAlternate', hold=test_time, value=1) # RollRightButton
                 else:
-                    self.keys.send('RollLeftButton', hold=test_time)
+                    self.keys.send('RollAxisAlternate', hold=test_time, value=-1) # RollLeftButton
 
                 sleep(1)
 
@@ -534,9 +534,9 @@ class EDShipControl:
                     self.ap.overlay.overlay_paint()
 
                 if off['pit'] > 0:
-                    self.keys.send('PitchUpButton', hold=test_time)
+                    self.keys.send('PitchAxisAlternate', hold=test_time, value=1) # PitchUpButton
                 else:
-                    self.keys.send('PitchDownButton', hold=test_time)
+                    self.keys.send('PitchAxisAlternate', hold=test_time, value=-1) # PitchDownButton
 
                 sleep(1)
 
@@ -599,9 +599,9 @@ class EDShipControl:
                     self.ap.overlay.overlay_paint()
 
                 if off['yaw'] > 0:
-                    self.keys.send('YawRightButton', hold=test_time)
+                    self.keys.send('YawAxisAlternate', hold=test_time, value=1) # YawRightButton
                 else:
-                    self.keys.send('YawLeftButton', hold=test_time)
+                    self.keys.send('YawAxisAlternate', hold=test_time, value=-1) # YawLeftButton
 
                 sleep(1)
 

@@ -357,16 +357,19 @@ class Input(ctypes.Structure):
 
 def choose_send_function(key, value=0):
     """
-    Choose the appropriate send function based on the key and value.
-    @param key: The key scancode to send (e.g., "Key_W", "Joy0_1").
-    @param value: The value to send (0 for release/reset axis, 1 for press/full axis, -1 for full invert axis).
+    Choose the appropriate send function to simulate a key/button press based on the type
+    of the resolved binding.
+    @param key: The resolved binding value, as returned by EDKeys.get_scancode():
+        - An int keyboard scancode (e.g. 30 for Key_A) when the binding device is "Keyboard".
+        - A vJoy code string in the format 'Joy{DeviceIndex}_{Name}' (e.g. "Joy0_1", "Joy1_XAxis")
+          when the binding device is "T16000M" (simulated through the virtual vJoy device).
+    @param value: The value to send. For a keyboard key: 1 = pressed, anything else = released.
+                  For a vJoy axis/button: see vJoy_input.PushJoy().
     """
-    
-    if "Key" in key:
-        PressKey(key) if value==1 else ReleaseKey(key)
-
-    elif "Joy" in key:
+    if isinstance(key, str) and "Joy" in key:
         vJoy_input.PushJoy(key, value)
+    else:
+        PressKey(key) if value == 1 else ReleaseKey(key)
 
 # Actual Functions
 

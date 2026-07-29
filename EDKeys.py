@@ -41,6 +41,7 @@ class EDKeys:
             'YawAxisAlternate',
             'RollAxisAlternate',
             'PitchAxisAlternate',
+            'UseAlternateFlightValuesToggle',
             
             'SetSpeedZero',
             'SetSpeed50', # Ajouté
@@ -268,7 +269,7 @@ class EDKeys:
 
     # Note:  this routine will grab the *.binds file which is the latest modified
     def get_latest_keybinds(self):
-        path_bindings = environ['LOCALAPPDATA'] + "\Frontier Developments\Elite Dangerous\Options\Bindings"
+        path_bindings = environ['LOCALAPPDATA'] + r"\Frontier Developments\Elite Dangerous\Options\Bindings"
         try:
             list_of_bindings = [join(path_bindings, f) for f in listdir(path_bindings) if
                                 isfile(join(path_bindings, f)) and f.endswith('.binds')]
@@ -288,11 +289,11 @@ class EDKeys:
             sleep(0.05)
 
         if type == 'Up':
-            ReleaseKey(key)
+            choose_send_function(key, value=0)
         else:
-            PressKey(key)
+            choose_send_function(key, value=1)
 
-    def send(self, key_binding, hold=None, repeat=1, repeat_delay=None, state=None, device_type=None):
+    def send(self, key_binding, hold=None, repeat=1, repeat_delay=None, state=None, value=0):
         """ Send a key based on the defined keybind
         @param key_binding: The key bind name (i.e. UseBoostJuice).
         @param hold: The time to hold the key down in seconds.
@@ -327,10 +328,10 @@ class EDKeys:
 
             if state is None or state == 1:
                 for mod in key['mods']:
-                    PressKey(mod)
+                    choose_send_function(mod, value)
                     sleep(self.key_mod_delay)
 
-                PressKey(key['key'])
+                choose_send_function(key['key'], value)
 
             if state is None:
                 if hold:
@@ -344,11 +345,11 @@ class EDKeys:
                 sleep(0.1)
 
             if state is None or state == 0:
-                ReleaseKey(key['key'])
+                choose_send_function(key['key'], value)
 
                 for mod in key['mods']:
                     sleep(self.key_mod_delay)
-                    ReleaseKey(mod)
+                    choose_send_function(mod, value)
 
             if repeat_delay:
                 sleep(repeat_delay)
@@ -368,12 +369,12 @@ class EDKeys:
         ]
         for sc in modifier_scancodes:
             if sc is not None:
-                ReleaseKey(sc)
+                choose_send_function(sc, value=0)
 
         for binding in self.keys.values():
-            ReleaseKey(binding['key'])
+            choose_send_function(binding['key'], value=0)
             for mod in binding['mods']:
-                ReleaseKey(mod)
+                choose_send_function(mod, value=0)
 
     def get_collisions(self, key_name: str) -> list[str]:
         """ Get key name collisions (keys used for more than one binding).

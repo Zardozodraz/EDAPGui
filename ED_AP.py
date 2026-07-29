@@ -1604,7 +1604,7 @@ class EDAutopilot:
 
         # if sun in front of us, then keep pitching up until it is below us
         while self.is_sun_dead_ahead(scr_reg):
-            self.keys.send('PitchUpButton', state=1)
+            self.keys.send('PitchAxisAlternate', state=1, value=1) # PichUpbutton
 
             # check if we are being interdicted
             interdicted = self.interdiction_check()
@@ -1622,13 +1622,13 @@ class EDAutopilot:
         # Some ships heat up too much and need pitch up a little further
         if self.sunpitchuptime > 0.0:
             sleep(self.sunpitchuptime)
-        self.keys.send('PitchUpButton', state=0)
+        self.keys.send('PitchAxisAlternate', state=0, value=0) # PitchUpbutton
 
         # Some ships run cool so need to pitch down a little if we are scooping
         if scooping and self.sunpitchuptime < 0.0:
-            self.keys.send('PitchDownButton', state=1)
+            self.keys.send('PitchAxisAlternate', state=1, value=-1) # PitchDownButton
             sleep(-1.0 * self.sunpitchuptime)
-            self.keys.send('PitchDownButton', state=0)
+            self.keys.send('PitchAxisAlternate', state=0, value=0) # PitchDownButton
 
     def compass_align(self, scr_reg) -> bool:
         """ Use the compass to find the nav point position when in SC or in space.  Will then perform rotation and

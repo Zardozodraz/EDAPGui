@@ -68,7 +68,7 @@ class EDGalaxyMap:
             ap.keys.send('UI_Select', hold=3.0)
 
             # Close Galaxy map
-            ap.keys.send('GalaxyMapOpen')
+            ap.keys.send('GalaxyMapOpen', value=1)
             sleep(0.5)
             return True
 
@@ -112,7 +112,7 @@ class EDGalaxyMap:
                 sleep(1)
 
         # Close Galaxy map
-        ap.keys.send('GalaxyMapOpen')
+        ap.keys.send('GalaxyMapOpen', value=1)
         sleep(2)
         return True
 
@@ -129,7 +129,7 @@ class EDGalaxyMap:
         last_nav_route_sys_uc = last_nav_route_sys.upper()
         if last_nav_route_sys_uc == target_name_uc:
             # Close Galaxy map
-            ap.keys.send('GalaxyMapOpen')
+            ap.keys.send('GalaxyMapOpen', value=1)
             return True
 
         # navigate to and select: search field
@@ -209,7 +209,7 @@ class EDGalaxyMap:
                 correct_route = True
 
         # Close Galaxy map
-        ap.keys.send('GalaxyMapOpen')
+        ap.keys.send('GalaxyMapOpen', value=1)
         sleep(0.5)
         return True
 
@@ -234,7 +234,7 @@ class EDGalaxyMap:
             # Goto cockpit view
             self.ap.ship_control.goto_cockpit_view()
             # Goto Galaxy Map
-            self.keys.send('GalaxyMapOpen')
+            self.keys.send('GalaxyMapOpen', value=1)
 
             if self.ap.debug_overlay:
                 stn_svcs = Quad.from_rect(self.reg['full_panel']['rect'])
