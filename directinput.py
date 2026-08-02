@@ -378,6 +378,7 @@ def choose_send_function(key, value=0):
 # Actual Functions
 
 def PressKey(hexKeyCode):
+    print(f"Press {hexKeyCode}")
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
     ii_.ki = KeyBdInput(0, hexKeyCode, 0x0008, 0, ctypes.pointer(extra))
@@ -385,8 +386,17 @@ def PressKey(hexKeyCode):
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 def ReleaseKey(hexKeyCode):
+    print(f"Release {hexKeyCode}")
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
     ii_.ki = KeyBdInput(0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
+
+if __name__ == "__main__":
+    time.sleep(5)  # Wait for 5 seconds before starting the simulation
+    # Example usage: simulate pressing and releasing the 'A' key (scancode 30)
+    PressKey(55)
+    time.sleep(0.1)  # Hold for 100 milliseconds
+    ReleaseKey(55)

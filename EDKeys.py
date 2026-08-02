@@ -299,7 +299,7 @@ class EDKeys:
         else:
             choose_send_function(key, value=1)
 
-    def send(self, key_binding, hold=None, repeat=1, repeat_delay=None, state=None, value=0):
+    def send(self, key_binding, hold=None, repeat=1, repeat_delay=None, state=None, value=1):
         """ Send a key based on the defined keybind
         @param key_binding: The key bind name (i.e. UseBoostJuice).
         @param hold: The time to hold the key down in seconds.
@@ -336,10 +336,10 @@ class EDKeys:
 
             if state is None or state == 1:
                 for mod in key['mods']:
-                    choose_send_function(mod, value)
+                    choose_send_function(mod, value) # PressKey
                     sleep(self.key_mod_delay)
 
-                choose_send_function(key['key'], value)
+                choose_send_function(key['key'], value) # PressKey
 
             if state is None:
                 if hold:
@@ -353,11 +353,11 @@ class EDKeys:
                 sleep(0.1)
 
             if state is None or state == 0:
-                choose_send_function(key['key'], value)
+                choose_send_function(key['key'], value=0) # ReleaseKey
 
                 for mod in key['mods']:
                     sleep(self.key_mod_delay)
-                    choose_send_function(mod, value)
+                    choose_send_function(mod, value=0) # ReleaseKey
 
             if repeat_delay:
                 sleep(repeat_delay)

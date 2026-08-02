@@ -96,7 +96,7 @@ def PushJoy(joy_code: str, value: float):
                   Pour un bouton: != 0 = pressé, 0 = relâché.
     @return: N/A
     """
-    print("PushJoy: ", joy_code, value)
+    #print("PushJoy: ", joy_code, value)
     match = re.match(r'^Joy(\d+)_(.+)$', joy_code)
     if not match:
         raise ValueError(f"Format de joy_code invalide : '{joy_code}'. Attendu: 'Joy<index>_<nom>'.")
